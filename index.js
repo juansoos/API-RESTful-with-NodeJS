@@ -2,8 +2,10 @@
 
 const express = require('express')
 const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
 
 const PORT = process.env.PORT || 3000
+const DB = process.env.MONGODB_URI || 'mongodb://localhost:27017/api-rest'
 
 const app = express()
 // Se añade el middleware de body-parser
@@ -22,6 +24,7 @@ app.put('/api/product/:productId', (req, res) => {})
 // Ruta para borrar un producto
 app.delete('/api/product/:productId', (req, res) => {})
 
-app.listen(PORT, () => {
-  console.log(`API REST listining in http://localhost:${PORT}`)
+mongoose.connect(DB, { useMongoClient: true }, (err, res) => {
+  if (err) throw err
+  app.listen(PORT, () => { console.log(`API REST listining in http://localhost:${PORT}`) })
 })
