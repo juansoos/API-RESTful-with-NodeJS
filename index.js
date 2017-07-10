@@ -16,9 +16,22 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 // Ruta para consultar todos los productos
-app.get('/api/product', (req, res) => {})
+app.get('/api/product', (req, res) => {
+  Product.find({}, (err, products) => {
+    if (err) return res.status(500).send({ message: `Error al realizar la petición: ${err}` })
+    if (!products) return res.status(404).send({ message: `No existen productos: ${err}` })
+    res.status(200).send({ products })
+  })
+})
 // Ruta para consultar un producto
-app.get('/api/product/:productId', (req, res) => {})
+app.get('/api/product/:productId', (req, res) => {
+  let productId = req.params.productId
+  Product.findById(productId, (err, product) => {
+    if (err) return res.status(500).send({ message: `Error al realizar la petición: ${err}` })
+    if (!product) return res.status(404).send({ message: `El producto no existe: ${err}` })
+    res.status(200).send({ product })
+  })
+})
 // Ruta para añadir productos
 app.post('/api/product', (req, res) => {
   let product = new Product()
@@ -29,7 +42,7 @@ app.post('/api/product', (req, res) => {
   product.description = req.body.description
 
   product.save((err, productStored) => {
-    if (err) res.status(500).send({ message: err })
+    if (err) res.status(500).send({ message: `Error al agregar el product: ${err}` })
     res.status(200).send({ product: productStored })
   })
 })
